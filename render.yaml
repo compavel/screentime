@@ -19,17 +19,8 @@ services:
       - key: TMDB_IMAGE_URL
         value: https://image.tmdb.org/t/p/w500
       - key: DB_CONNECTION
-        value: pgsql
-      - key: DATABASE_URL
-        fromDatabase:
-          name: screentime-db
-          property: connectionString
+        value: sqlite
       - key: SESSION_DRIVER
         value: file
       - key: QUEUE_CONNECTION
         value: sync
-
-databases:
-  - name: screentime-db
-    plan: free
-    databaseName: screentime
