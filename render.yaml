@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: screentime
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: APP_NAME
+        value: ScreenTime
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_URL
+        value: https://screentime.onrender.com
+      - key: TMDB_API_KEY
+        value: c3e5a5db5a59626b4744ee5fdb0ab354
+      - key: TMDB_BASE_URL
+        value: https://api.themoviedb.org/3
+      - key: TMDB_IMAGE_URL
+        value: https://image.tmdb.org/t/p/w500
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DATABASE_URL
+        fromDatabase:
+          name: screentime-db
+          property: connectionString
+      - key: SESSION_DRIVER
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+
+databases:
+  - name: screentime-db
+    plan: free
+    databaseName: screentime
