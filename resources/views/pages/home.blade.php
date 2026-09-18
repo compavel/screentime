@@ -57,8 +57,8 @@
             </div>
             <div class="relative">
                 <button onclick="scrollCarousel(this, -1)" 
-                    class="carousel-btn-left absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-black/70 hover:bg-indigo-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover/section:opacity-100 transition-all duration-300 backdrop-blur-sm border border-white/10">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                    class="carousel-btn-left absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-black/70 hover:bg-indigo-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover/section:opacity-100 transition-all duration-300 backdrop-blur-sm border border-white/10">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
                 </button>
                 <div class="carousel-track flex gap-4 overflow-x-auto pb-4 scrollbar-hide scroll-smooth" onscroll="updateCarouselArrows(this)">
                     @foreach(array_slice($trendingMovies, 0, 10) as $movie)
@@ -79,8 +79,8 @@
                     @endforeach
                 </div>
                 <button onclick="scrollCarousel(this, 1)" 
-                    class="carousel-btn-right absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-black/70 hover:bg-indigo-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover/section:opacity-100 transition-all duration-300 backdrop-blur-sm border border-white/10">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                    class="carousel-btn-right absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-black/70 hover:bg-indigo-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover/section:opacity-100 transition-all duration-300 backdrop-blur-sm border border-white/10">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
                 </button>
                 <div class="absolute left-0 top-0 bottom-4 w-8 bg-gradient-to-r from-gray-900 to-transparent pointer-events-none z-[5]"></div>
                 <div class="absolute right-0 top-0 bottom-4 w-8 bg-gradient-to-l from-gray-900 to-transparent pointer-events-none z-[5]"></div>
@@ -95,8 +95,8 @@
             </div>
             <div class="relative">
                 <button onclick="scrollCarousel(this, -1)" 
-                    class="carousel-btn-left absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-black/70 hover:bg-indigo-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover/section:opacity-100 transition-all duration-300 backdrop-blur-sm border border-white/10">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                    class="carousel-btn-left absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-black/70 hover:bg-indigo-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover/section:opacity-100 transition-all duration-300 backdrop-blur-sm border border-white/10">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
                 </button>
                 <div class="carousel-track flex gap-4 overflow-x-auto pb-4 scrollbar-hide scroll-smooth" onscroll="updateCarouselArrows(this)">
                     @foreach(array_slice($trendingTv, 0, 10) as $show)
@@ -117,8 +117,8 @@
                     @endforeach
                 </div>
                 <button onclick="scrollCarousel(this, 1)" 
-                    class="carousel-btn-right absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-black/70 hover:bg-indigo-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover/section:opacity-100 transition-all duration-300 backdrop-blur-sm border border-white/10">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                    class="carousel-btn-right absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-black/70 hover:bg-indigo-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover/section:opacity-100 transition-all duration-300 backdrop-blur-sm border border-white/10">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
                 </button>
                 <div class="absolute left-0 top-0 bottom-4 w-8 bg-gradient-to-r from-gray-900 to-transparent pointer-events-none z-[5]"></div>
                 <div class="absolute right-0 top-0 bottom-4 w-8 bg-gradient-to-l from-gray-900 to-transparent pointer-events-none z-[5]"></div>
@@ -162,8 +162,8 @@
             </div>
             <div class="relative">
                 <button onclick="scrollCarousel(this, -1)" 
-                    class="carousel-btn-left absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-black/70 hover:bg-indigo-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover/section:opacity-100 transition-all duration-300 backdrop-blur-sm border border-white/10">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                    class="carousel-btn-left absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-black/70 hover:bg-indigo-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover/section:opacity-100 transition-all duration-300 backdrop-blur-sm border border-white/10">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
                 </button>
                 <div class="carousel-track flex gap-4 overflow-x-auto pb-4 scrollbar-hide scroll-smooth" onscroll="updateCarouselArrows(this)">
                     @foreach($popularMovies as $movie)
@@ -183,8 +183,8 @@
                     @endforeach
                 </div>
                 <button onclick="scrollCarousel(this, 1)" 
-                    class="carousel-btn-right absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-black/70 hover:bg-indigo-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover/section:opacity-100 transition-all duration-300 backdrop-blur-sm border border-white/10">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                    class="carousel-btn-right absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-black/70 hover:bg-indigo-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover/section:opacity-100 transition-all duration-300 backdrop-blur-sm border border-white/10">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
                 </button>
                 <div class="absolute left-0 top-0 bottom-4 w-8 bg-gradient-to-r from-gray-900 to-transparent pointer-events-none z-[5]"></div>
                 <div class="absolute right-0 top-0 bottom-4 w-8 bg-gradient-to-l from-gray-900 to-transparent pointer-events-none z-[5]"></div>
@@ -199,8 +199,8 @@
             </div>
             <div class="relative">
                 <button onclick="scrollCarousel(this, -1)" 
-                    class="carousel-btn-left absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-black/70 hover:bg-indigo-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover/section:opacity-100 transition-all duration-300 backdrop-blur-sm border border-white/10">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                    class="carousel-btn-left absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-black/70 hover:bg-indigo-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover/section:opacity-100 transition-all duration-300 backdrop-blur-sm border border-white/10">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
                 </button>
                 <div class="carousel-track flex gap-4 overflow-x-auto pb-4 scrollbar-hide scroll-smooth" onscroll="updateCarouselArrows(this)">
                     @foreach($popularTv as $show)
@@ -220,8 +220,8 @@
                     @endforeach
                 </div>
                 <button onclick="scrollCarousel(this, 1)" 
-                    class="carousel-btn-right absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-black/70 hover:bg-indigo-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover/section:opacity-100 transition-all duration-300 backdrop-blur-sm border border-white/10">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                    class="carousel-btn-right absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-black/70 hover:bg-indigo-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover/section:opacity-100 transition-all duration-300 backdrop-blur-sm border border-white/10">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
                 </button>
                 <div class="absolute left-0 top-0 bottom-4 w-8 bg-gradient-to-r from-gray-900 to-transparent pointer-events-none z-[5]"></div>
                 <div class="absolute right-0 top-0 bottom-4 w-8 bg-gradient-to-l from-gray-900 to-transparent pointer-events-none z-[5]"></div>
