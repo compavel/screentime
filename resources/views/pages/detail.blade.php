@@ -96,6 +96,99 @@
                     @endauth
                 </div>
 
+                {{-- Rating Section --}}
+                @auth
+                    <div class="bg-gray-800/50 rounded-xl p-4 mb-6 border border-gray-700/50" x-data="ratingSystem()">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-sm font-bold text-white">Your Rating</h3>
+                            <span class="text-xs text-gray-400" x-text="currentRating > 0 ? 'Rated ' + currentRating + '/5' : 'Not rated yet'"></span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="flex gap-1">
+                                <template x-for="star in 5" :key="star">
+                                    <button @click="setRating(star)" 
+                                            class="text-2xl transition-all hover:scale-110"
+                                            :class="star <= currentRating ? 'text-yellow-400' : 'text-gray-600 hover:text-yellow-400/50'">
+                                        ★
+                                    </button>
+                                </template>
+                            </div>
+                            <button x-show="currentRating > 0" @click="removeRating()" 
+                                    class="text-xs text-gray-500 hover:text-red-400 ml-2 transition">
+                                Remove
+                            </button>
+                        </div>
+                        <p class="text-[10px] text-gray-500 mt-2">Rating ini membantu kami memberikan rekomendasi yang lebih akurat untukmu</p>
+                    </div>
+
+                    <script>
+                        const ratingData = {
+                            tmdbId: {{ $item['id'] }},
+                            title: {!! json_encode($title) !!},
+                            posterPath: {!! json_encode($item['poster_path'] ?? '') !!},
+                            mediaType: {!! json_encode($type) !!},
+                            genreIds: {!! json_encode(implode(',', array_column($item['genres'] ?? [], 'id'))) !!},
+                            currentRating: {{ $userRating ? $userRating->rating : 0 }},
+                            storeUrl: '{{ route("rating.store") }}',
+                            deleteUrl: '{{ route("rating.delete") }}',
+                            csrfToken: '{{ csrf_token() }}'
+                        };
+
+                        function ratingSystem() {
+                            return {
+                                currentRating: ratingData.currentRating,
+                                setRating(rating) {
+                                    this.currentRating = rating;
+                                    fetch(ratingData.storeUrl, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRF-TOKEN': ratingData.csrfToken
+                                        },
+                                        body: JSON.stringify({
+                                            tmdb_id: ratingData.tmdbId,
+                                            title: ratingData.title,
+                                            poster_path: ratingData.posterPath,
+                                            media_type: ratingData.mediaType,
+                                            rating: rating,
+                                            genre_ids: ratingData.genreIds
+                                        })
+                                    }).then(r => r.json()).then(data => {
+                                        if (data.success) {
+                                            this.showToast('Rating saved!');
+                                        }
+                                    });
+                                },
+                                removeRating() {
+                                    this.currentRating = 0;
+                                    fetch(ratingData.deleteUrl, {
+                                        method: 'DELETE',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRF-TOKEN': ratingData.csrfToken
+                                        },
+                                        body: JSON.stringify({
+                                            tmdb_id: ratingData.tmdbId
+                                        })
+                                    }).then(r => r.json()).then(data => {
+                                        if (data.success) {
+                                            this.showToast('Rating removed!');
+                                        }
+                                    });
+                                },
+                                showToast(message) {
+                                    // Simple toast notification
+                                    const toast = document.createElement('div');
+                                    toast.className = 'fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg z-50 text-sm';
+                                    toast.textContent = message;
+                                    document.body.appendChild(toast);
+                                    setTimeout(() => toast.remove(), 2000);
+                                }
+                            }
+                        }
+                    </script>
+                @endauth
+
                 {{-- Storyline --}}
                 @if($item['overview'])
                     <div class="mb-6">

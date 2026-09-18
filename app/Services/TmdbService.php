@@ -167,4 +167,24 @@ class TmdbService
 
         return 'Unknown';
     }
+
+    public function getRecommendations(int $movieId): array
+    {
+        $data = $this->get("/movie/{$movieId}/recommendations");
+        return $data['results'] ?? [];
+    }
+
+    public function getTvRecommendations(int $tvId): array
+    {
+        $data = $this->get("/tv/{$tvId}/recommendations");
+        return $data['results'] ?? [];
+    }
+
+    public function discoverByGenres(array $genreIds, int $page = 1): array
+    {
+        return $this->discoverMovies([
+            'genre_id' => implode(',', $genreIds),
+            'page' => $page,
+        ]);
+    }
 }

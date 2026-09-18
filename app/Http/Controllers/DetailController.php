@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\UserRating;
 use App\Models\Watchlist;
 use App\Services\TmdbService;
 use Illuminate\Http\Request;
@@ -20,8 +21,12 @@ class DetailController extends Controller
         }
 
         $watchlist = null;
+        $userRating = null;
         if (Auth::check()) {
             $watchlist = Watchlist::where('user_id', Auth::id())
+                ->where('tmdb_id', $id)
+                ->first();
+            $userRating = UserRating::where('user_id', Auth::id())
                 ->where('tmdb_id', $id)
                 ->first();
         }
@@ -30,6 +35,7 @@ class DetailController extends Controller
             'item' => $item,
             'type' => 'movie',
             'watchlist' => $watchlist,
+            'userRating' => $userRating,
         ]);
     }
 
@@ -42,8 +48,12 @@ class DetailController extends Controller
         }
 
         $watchlist = null;
+        $userRating = null;
         if (Auth::check()) {
             $watchlist = Watchlist::where('user_id', Auth::id())
+                ->where('tmdb_id', $id)
+                ->first();
+            $userRating = UserRating::where('user_id', Auth::id())
                 ->where('tmdb_id', $id)
                 ->first();
         }
@@ -52,6 +62,7 @@ class DetailController extends Controller
             'item' => $item,
             'type' => 'tv',
             'watchlist' => $watchlist,
+            'userRating' => $userRating,
         ]);
     }
 }

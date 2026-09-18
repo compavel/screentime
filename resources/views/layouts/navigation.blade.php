@@ -12,6 +12,7 @@
                     <a href="{{ route('browse', ['type' => 'movie']) }}" class="text-sm font-medium {{ request()->routeIs('browse') && request('type') === 'movie' ? 'text-white' : 'text-gray-400 hover:text-white' }} transition">Movies</a>
                     <a href="{{ route('browse', ['type' => 'tv']) }}" class="text-sm font-medium {{ request()->routeIs('browse') && request('type') === 'tv' ? 'text-white' : 'text-gray-400 hover:text-white' }} transition">TV Shows</a>
                     @auth
+                        <a href="{{ route('for-you') }}" class="text-sm font-medium {{ request()->routeIs('for-you') ? 'text-white' : 'text-gray-400 hover:text-white' }} transition">For You</a>
                         <a href="{{ route('watchlist') }}" class="text-sm font-medium {{ request()->routeIs('watchlist') ? 'text-white' : 'text-gray-400 hover:text-white' }} transition">My List</a>
                     @endauth
                 </div>
@@ -67,6 +68,7 @@
             <a href="{{ route('browse', ['type' => 'movie']) }}" class="block py-2 text-sm text-gray-300 hover:text-white">Movies</a>
             <a href="{{ route('browse', ['type' => 'tv']) }}" class="block py-2 text-sm text-gray-300 hover:text-white">TV Shows</a>
             @auth
+                <a href="{{ route('for-you') }}" class="block py-2 text-sm text-gray-300 hover:text-white">For You</a>
                 <a href="{{ route('watchlist') }}" class="block py-2 text-sm text-gray-300 hover:text-white">My List</a>
             @endauth
             <form action="{{ route('search') }}" method="GET" class="sm:hidden pt-2">
