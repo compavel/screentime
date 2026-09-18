@@ -15,7 +15,7 @@
         </div>
 
         {{-- Genre Tags --}}
-        @if($genreNames->count())
+        @if(count($genreNames) > 0)
             <div class="mb-6">
                 <p class="text-xs text-gray-500 mb-2">Your favorite genres:</p>
                 <div class="flex flex-wrap gap-2">
