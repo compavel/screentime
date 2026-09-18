@@ -66,9 +66,6 @@
                                     {{ $genre }}
                                 @endif
                             </h2>
-                            @if(count($movies) >= 6)
-                                <span class="text-xs text-gray-500">View all →</span>
-                            @endif
                         </div>
                         <div class="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
                             @foreach($movies as $movie)

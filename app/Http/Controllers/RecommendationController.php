@@ -72,16 +72,18 @@ class RecommendationController extends Controller
                 }
             }
         } else {
-            // 1. Get recommendations from each top rated movie
+            // 1. Get recommendations + similar from each top rated movie
             $rawRecs = [];
             foreach ($topRated as $rated) {
                 if ($rated->media_type === 'movie') {
                     $recs = $this->tmdb->getRecommendations($rated->tmdb_id);
+                    $similar = $this->tmdb->getSimilarMovies($rated->tmdb_id);
                 } else {
                     $recs = $this->tmdb->getTvRecommendations($rated->tmdb_id);
+                    $similar = $this->tmdb->getSimilarTv($rated->tmdb_id);
                 }
                 
-                foreach ($recs as $rec) {
+                foreach (array_merge($recs, $similar) as $rec) {
                     $recId = $rec['id'] ?? 0;
                     if ($recId && !in_array($recId, $seenIds)) {
                         $rawRecs[] = $rec;
@@ -91,10 +93,22 @@ class RecommendationController extends Controller
             }
 
             // 2. If not enough, discover by top genres
-            if (count($rawRecs) < 15 && !empty($topGenreIds)) {
+            if (count($rawRecs) < 30 && !empty($topGenreIds)) {
                 $genreRecs = $this->tmdb->discoverByGenres($topGenreIds);
                 $results = $genreRecs['results'] ?? [];
                 foreach ($results as $rec) {
+                    $recId = $rec['id'] ?? 0;
+                    if ($recId && !in_array($recId, $seenIds)) {
+                        $rawRecs[] = $rec;
+                        $seenIds[] = $recId;
+                    }
+                }
+            }
+
+            // 3. Still not enough? Add popular movies
+            if (count($rawRecs) < 40) {
+                $popular = $this->tmdb->getPopularMovies();
+                foreach ($popular as $rec) {
                     $recId = $rec['id'] ?? 0;
                     if ($recId && !in_array($recId, $seenIds)) {
                         $rawRecs[] = $rec;
@@ -138,9 +152,12 @@ class RecommendationController extends Controller
         // Sort genres by count (most recommendations first)
         uasort($groupedRecommendations, fn($a, $b) => count($b) - count($a));
 
-        // Limit each group to 6 items
+        // Remove "Unknown" genre
+        unset($groupedRecommendations['Unknown']);
+
+        // Limit each group to 10 items
         foreach ($groupedRecommendations as $genre => &$movies) {
-            $movies = array_slice($movies, 0, 6);
+            $movies = array_slice($movies, 0, 10);
         }
 
         // Get genre names for display

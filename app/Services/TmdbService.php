@@ -187,4 +187,22 @@ class TmdbService
             'page' => $page,
         ]);
     }
+
+    public function getSimilarMovies(int $movieId): array
+    {
+        $data = $this->get("/movie/{$movieId}/similar");
+        return $data['results'] ?? [];
+    }
+
+    public function getSimilarTv(int $tvId): array
+    {
+        $data = $this->get("/tv/{$tvId}/similar");
+        return $data['results'] ?? [];
+    }
+
+    public function getTopRatedMovies(): array
+    {
+        $data = $this->get('/movie/top_rated');
+        return $data['results'] ?? [];
+    }
 }
