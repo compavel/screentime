@@ -25,10 +25,9 @@ class RecommendationController extends Controller
             ->orderBy('rating', 'desc')
             ->get();
 
-        // Get top rated (4-5 stars) for recommendations
+        // Get top rated (4-5 stars)
         $topRated = $allRatings->where('rating', '>=', 4);
 
-        $recommendations = [];
         $seenIds = [];
 
         // Mark all rated movies as seen
@@ -36,32 +35,45 @@ class RecommendationController extends Controller
             $seenIds[] = $rated->tmdb_id;
         }
 
-        if ($topRated->isEmpty()) {
-            // No ratings yet, show trending movies
-            $recommendations = $this->tmdb->getTrendingMovies();
-        } else {
-            // 1. Get genre preferences from rated movies
-            $genreCounts = [];
-            
-            foreach ($allRatings as $rated) {
-                if ($rated->genre_ids) {
-                    $genres = array_filter(explode(',', $rated->genre_ids));
-                    foreach ($genres as $genreId) {
-                        $genreId = (int) trim($genreId);
-                        if ($genreId > 0) {
-                            // Higher weight for higher ratings
-                            $weight = $rated->rating;
-                            $genreCounts[$genreId] = ($genreCounts[$genreId] ?? 0) + $weight;
-                        }
+        // Build genre preference map
+        $genreCounts = [];
+        foreach ($allRatings as $rated) {
+            if ($rated->genre_ids) {
+                $genres = array_filter(explode(',', $rated->genre_ids));
+                foreach ($genres as $genreId) {
+                    $genreId = (int) trim($genreId);
+                    if ($genreId > 0) {
+                        $genreCounts[$genreId] = ($genreCounts[$genreId] ?? 0) + $rated->rating;
                     }
                 }
             }
+        }
+        arsort($genreCounts);
+        $topGenreIds = array_slice(array_keys($genreCounts), 0, 4);
 
-            // Sort genres by weight, get top 3
-            arsort($genreCounts);
-            $topGenreIds = array_slice(array_keys($genreCounts), 0, 3);
+        // Group recommendations by genre
+        $groupedRecommendations = [];
+        $allRecommendations = [];
 
-            // 2. Get recommendations from each top rated movie
+        if ($topRated->isEmpty()) {
+            // No ratings, show trending grouped by genre
+            $trending = $this->tmdb->getTrendingMovies();
+            foreach ($trending as $movie) {
+                $movieGenres = $movie['genre_ids'] ?? [];
+                foreach ($movieGenres as $genreId) {
+                    if (in_array($genreId, [28, 12, 16, 35, 80, 99, 18, 10751, 14, 36, 27, 9648, 10749, 878, 10770, 53, 10752, 37])) {
+                        $genreName = $this->tmdb->getGenreName($genreId);
+                        if (!isset($groupedRecommendations[$genreName])) {
+                            $groupedRecommendations[$genreName] = [];
+                        }
+                        $groupedRecommendations[$genreName][] = $movie;
+                        $allRecommendations[] = $movie;
+                    }
+                }
+            }
+        } else {
+            // 1. Get recommendations from each top rated movie
+            $rawRecs = [];
             foreach ($topRated as $rated) {
                 if ($rated->media_type === 'movie') {
                     $recs = $this->tmdb->getRecommendations($rated->tmdb_id);
@@ -72,45 +84,66 @@ class RecommendationController extends Controller
                 foreach ($recs as $rec) {
                     $recId = $rec['id'] ?? 0;
                     if ($recId && !in_array($recId, $seenIds)) {
-                        $recommendations[] = $rec;
+                        $rawRecs[] = $rec;
                         $seenIds[] = $recId;
                     }
                 }
             }
 
-            // 3. If not enough, discover by top genres
-            if (count($recommendations) < 12 && !empty($topGenreIds)) {
+            // 2. If not enough, discover by top genres
+            if (count($rawRecs) < 15 && !empty($topGenreIds)) {
                 $genreRecs = $this->tmdb->discoverByGenres($topGenreIds);
                 $results = $genreRecs['results'] ?? [];
                 foreach ($results as $rec) {
                     $recId = $rec['id'] ?? 0;
                     if ($recId && !in_array($recId, $seenIds)) {
-                        $recommendations[] = $rec;
+                        $rawRecs[] = $rec;
                         $seenIds[] = $recId;
                     }
                 }
             }
-        }
 
-        // Limit to 18 results
-        $recommendations = array_slice($recommendations, 0, 18);
-
-        // Get genre names for display (only top genres)
-        $genreCounts = [];
-        foreach ($allRatings as $rated) {
-            if ($rated->genre_ids) {
-                $genres = array_filter(explode(',', $rated->genre_ids));
-                foreach ($genres as $genreId) {
-                    $genreId = (int) trim($genreId);
-                    if ($genreId > 0) {
-                        $genreCounts[$genreId] = ($genreCounts[$genreId] ?? 0) + 1;
+            // 3. Group by primary genre
+            foreach ($rawRecs as $movie) {
+                $movieGenres = $movie['genre_ids'] ?? [];
+                $assigned = false;
+                
+                // Try to assign to a top genre first
+                foreach ($topGenreIds as $preferredGenreId) {
+                    if (in_array($preferredGenreId, $movieGenres)) {
+                        $genreName = $this->tmdb->getGenreName($preferredGenreId);
+                        if (!isset($groupedRecommendations[$genreName])) {
+                            $groupedRecommendations[$genreName] = [];
+                        }
+                        $groupedRecommendations[$genreName][] = $movie;
+                        $allRecommendations[] = $movie;
+                        $assigned = true;
+                        break;
                     }
+                }
+
+                // If not assigned to preferred genre, use first available genre
+                if (!$assigned && !empty($movieGenres)) {
+                    $firstGenreId = $movieGenres[0];
+                    $genreName = $this->tmdb->getGenreName($firstGenreId);
+                    if (!isset($groupedRecommendations[$genreName])) {
+                        $groupedRecommendations[$genreName] = [];
+                    }
+                    $groupedRecommendations[$genreName][] = $movie;
+                    $allRecommendations[] = $movie;
                 }
             }
         }
-        arsort($genreCounts);
-        $topGenreIds = array_slice(array_keys($genreCounts), 0, 5);
-        
+
+        // Sort genres by count (most recommendations first)
+        uasort($groupedRecommendations, fn($a, $b) => count($b) - count($a));
+
+        // Limit each group to 6 items
+        foreach ($groupedRecommendations as $genre => &$movies) {
+            $movies = array_slice($movies, 0, 6);
+        }
+
+        // Get genre names for display
         $genreNames = [];
         foreach ($topGenreIds as $genreId) {
             $name = $this->tmdb->getGenreName($genreId);
@@ -120,7 +153,8 @@ class RecommendationController extends Controller
         }
 
         return view('pages.for-you', [
-            'recommendations' => $recommendations,
+            'groupedRecommendations' => $groupedRecommendations,
+            'allRecommendations' => array_slice($allRecommendations, 0, 18),
             'topRated' => $topRated->values(),
             'genreNames' => $genreNames,
             'hasRatings' => $allRatings->isNotEmpty(),
