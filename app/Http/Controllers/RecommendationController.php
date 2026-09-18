@@ -20,83 +20,110 @@ class RecommendationController extends Controller
     {
         $user = Auth::user();
         
-        // Get user's top rated movies (rating >= 4)
-        $topRated = UserRating::where('user_id', $user->id)
-            ->where('rating', '>=', 4)
+        // Get ALL user's rated movies
+        $allRatings = UserRating::where('user_id', $user->id)
             ->orderBy('rating', 'desc')
-            ->limit(5)
             ->get();
+
+        // Get top rated (4-5 stars) for recommendations
+        $topRated = $allRatings->where('rating', '>=', 4);
 
         $recommendations = [];
         $seenIds = [];
 
+        // Mark all rated movies as seen
+        foreach ($allRatings as $rated) {
+            $seenIds[] = $rated->tmdb_id;
+        }
+
         if ($topRated->isEmpty()) {
-            // No ratings yet, show popular movies
-            $recommendations = $this->tmdb->getPopularMovies();
+            // No ratings yet, show trending movies
+            $recommendations = $this->tmdb->getTrendingMovies();
         } else {
-            // Get genre preferences from rated movies
+            // 1. Get genre preferences from rated movies
             $genreCounts = [];
             
-            foreach ($topRated as $rated) {
+            foreach ($allRatings as $rated) {
                 if ($rated->genre_ids) {
-                    $genres = explode(',', $rated->genre_ids);
+                    $genres = array_filter(explode(',', $rated->genre_ids));
                     foreach ($genres as $genreId) {
-                        $genreId = (int) $genreId;
-                        $weight = $rated->rating >= 4 ? 2 : 1;
-                        $genreCounts[$genreId] = ($genreCounts[$genreId] ?? 0) + $weight;
+                        $genreId = (int) trim($genreId);
+                        if ($genreId > 0) {
+                            // Higher weight for higher ratings
+                            $weight = $rated->rating;
+                            $genreCounts[$genreId] = ($genreCounts[$genreId] ?? 0) + $weight;
+                        }
                     }
                 }
-                $seenIds[] = $rated->tmdb_id;
             }
 
-            // Sort genres by weight
+            // Sort genres by weight, get top 3
             arsort($genreCounts);
-            $topGenres = array_slice(array_keys($genreCounts), 0, 3);
+            $topGenreIds = array_slice(array_keys($genreCounts), 0, 3);
 
-            // Get recommendations from top rated movies
+            // 2. Get recommendations from each top rated movie
             foreach ($topRated as $rated) {
-                $recs = $this->tmdb->getRecommendations($rated->tmdb_id);
+                if ($rated->media_type === 'movie') {
+                    $recs = $this->tmdb->getRecommendations($rated->tmdb_id);
+                } else {
+                    $recs = $this->tmdb->getTvRecommendations($rated->tmdb_id);
+                }
+                
                 foreach ($recs as $rec) {
-                    if (!in_array($rec['id'], $seenIds)) {
+                    $recId = $rec['id'] ?? 0;
+                    if ($recId && !in_array($recId, $seenIds)) {
                         $recommendations[] = $rec;
-                        $seenIds[] = $rec['id'];
+                        $seenIds[] = $recId;
                     }
                 }
             }
 
-            // If not enough recommendations, discover by top genres
-            if (count($recommendations) < 10 && !empty($topGenres)) {
-                $genreRecs = $this->tmdb->discoverByGenres($topGenres);
+            // 3. If not enough, discover by top genres
+            if (count($recommendations) < 12 && !empty($topGenreIds)) {
+                $genreRecs = $this->tmdb->discoverByGenres($topGenreIds);
                 $results = $genreRecs['results'] ?? [];
                 foreach ($results as $rec) {
-                    if (!in_array($rec['id'], $seenIds)) {
+                    $recId = $rec['id'] ?? 0;
+                    if ($recId && !in_array($recId, $seenIds)) {
                         $recommendations[] = $rec;
-                        $seenIds[] = $rec['id'];
+                        $seenIds[] = $recId;
                     }
                 }
             }
         }
 
-        // Limit to 20 results
-        $recommendations = array_slice($recommendations, 0, 20);
+        // Limit to 18 results
+        $recommendations = array_slice($recommendations, 0, 18);
 
-        // Get genre names for display
-        $genreNames = [];
-        foreach ($topRated as $rated) {
+        // Get genre names for display (only top genres)
+        $genreCounts = [];
+        foreach ($allRatings as $rated) {
             if ($rated->genre_ids) {
-                $genres = explode(',', $rated->genre_ids);
+                $genres = array_filter(explode(',', $rated->genre_ids));
                 foreach ($genres as $genreId) {
-                    $genreNames[] = $this->tmdb->getGenreName((int) $genreId);
+                    $genreId = (int) trim($genreId);
+                    if ($genreId > 0) {
+                        $genreCounts[$genreId] = ($genreCounts[$genreId] ?? 0) + 1;
+                    }
                 }
             }
         }
-        $genreNames = array_unique(array_filter($genreNames));
+        arsort($genreCounts);
+        $topGenreIds = array_slice(array_keys($genreCounts), 0, 5);
+        
+        $genreNames = [];
+        foreach ($topGenreIds as $genreId) {
+            $name = $this->tmdb->getGenreName($genreId);
+            if ($name !== 'Unknown') {
+                $genreNames[] = $name;
+            }
+        }
 
         return view('pages.for-you', [
             'recommendations' => $recommendations,
-            'topRated' => $topRated,
-            'genreNames' => array_slice($genreNames, 0, 5),
-            'hasRatings' => $topRated->isNotEmpty(),
+            'topRated' => $topRated->values(),
+            'genreNames' => $genreNames,
+            'hasRatings' => $allRatings->isNotEmpty(),
         ]);
     }
 

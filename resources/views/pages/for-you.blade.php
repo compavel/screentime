@@ -32,18 +32,19 @@
         @if($topRated->count())
             <section class="mb-10">
                 <h2 class="text-lg font-bold text-white mb-4">Your Top Rated</h2>
-                <div class="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+                <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
                     @foreach($topRated as $rated)
                         <a href="{{ $rated->media_type === 'tv' ? route('detail.tv', $rated->tmdb_id) : route('detail.movie', $rated->tmdb_id) }}" 
-                           class="flex-none w-28 group">
-                            <div class="overflow-hidden rounded-xl card-hover transition-all duration-300">
-                                <img src="{{ $tmdbService->imageUrl($rated->poster_path) }}"
-                                     alt="{{ $rated->title }}" class="w-full aspect-[2/3] object-cover">
+                           class="group">
+                            <div class="overflow-hidden rounded-lg card-hover transition-all duration-300">
+                                <img src="{{ $tmdbService->imageUrl($rated->poster_path, 'w342') }}"
+                                     alt="{{ $rated->title }}" 
+                                     class="w-full aspect-[2/3] object-cover group-hover:scale-105 transition-transform duration-300">
                             </div>
-                            <p class="mt-2 text-xs text-gray-400 truncate">{{ $rated->title }}</p>
-                            <div class="flex items-center gap-1 mt-1">
+                            <p class="mt-1.5 text-xs text-gray-400 truncate">{{ $rated->title }}</p>
+                            <div class="flex items-center gap-0.5 mt-0.5">
                                 @for($i = 1; $i <= 5; $i++)
-                                    <span class="text-xs {{ $i <= $rated->rating ? 'text-yellow-400' : 'text-gray-600' }}">★</span>
+                                    <span class="text-[10px] {{ $i <= $rated->rating ? 'text-yellow-400' : 'text-gray-600' }}">★</span>
                                 @endfor
                             </div>
                         </a>
@@ -58,32 +59,32 @@
                 @if($hasRatings)
                     Recommended For You
                 @else
-                    Popular Movies
+                    Trending Movies
                 @endif
             </h2>
             
             @if(count($recommendations) > 0)
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
                     @foreach($recommendations as $movie)
                         <a href="{{ route('detail.movie', $movie['id']) }}" class="group">
-                            <div class="overflow-hidden rounded-xl card-hover transition-all duration-300">
-                                <img src="{{ $tmdbService->imageUrl($movie['poster_path'] ?? null) }}"
+                            <div class="overflow-hidden rounded-lg card-hover transition-all duration-300">
+                                <img src="{{ $tmdbService->imageUrl($movie['poster_path'] ?? null, 'w342') }}"
                                      alt="{{ $movie['title'] ?? $movie['name'] }}" 
                                      class="w-full aspect-[2/3] object-cover group-hover:scale-105 transition-transform duration-300">
                             </div>
-                            <p class="mt-2 text-xs text-gray-400 truncate">{{ $movie['title'] ?? $movie['name'] }}</p>
-                            <div class="flex items-center gap-2 mt-1">
-                                <span class="text-xs text-yellow-400">⭐ {{ number_format($movie['vote_average'] ?? 0, 1) }}</span>
-                                <span class="text-xs text-gray-500">{{ date('Y', strtotime($movie['release_date'] ?? now())) }}</span>
+                            <p class="mt-1.5 text-xs text-gray-400 truncate">{{ $movie['title'] ?? $movie['name'] }}</p>
+                            <div class="flex items-center gap-1.5 mt-0.5">
+                                <span class="text-[10px] text-yellow-400">⭐ {{ number_format($movie['vote_average'] ?? 0, 1) }}</span>
+                                <span class="text-[10px] text-gray-500">{{ date('Y', strtotime($movie['release_date'] ?? now())) }}</span>
                             </div>
                         </a>
                     @endforeach
                 </div>
             @else
-                <div class="text-center py-12">
-                    <p class="text-gray-500 text-sm">No recommendations yet. Start rating movies!</p>
+                <div class="text-center py-16 bg-gray-800/30 rounded-xl">
+                    <p class="text-gray-500 text-sm mb-4">No recommendations yet. Start rating movies!</p>
                     <a href="{{ route('browse', ['type' => 'movie']) }}" 
-                       class="inline-block mt-4 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-6 py-2 rounded-lg transition">
+                       class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-6 py-2 rounded-lg transition">
                         Browse Movies
                     </a>
                 </div>
