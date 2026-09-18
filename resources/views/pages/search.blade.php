@@ -38,14 +38,16 @@
                             <a href="{{ route('detail.movie', $movie['id']) }}" class="group">
                                 <div class="relative overflow-hidden rounded-xl card-hover transition-all duration-300">
                                     <img src="{{ app(\App\Services\TmdbService::class)->imageUrl($movie['poster_path'] ?? null) }}"
-                                         alt="{{ $movie['title'] }}" class="w-full aspect-[2/3] object-cover">
+                                         alt="{{ $movie['title'] ?? 'Movie' }}" class="w-full aspect-[2/3] object-cover">
+                                    @if(!empty($movie['vote_average']))
                                     <div class="absolute top-2 right-2 bg-black/70 backdrop-blur-sm px-1.5 py-0.5 rounded-full text-[10px] font-bold text-yellow-400">
                                         ⭐ {{ number_format($movie['vote_average'], 1) }}
                                     </div>
+                                    @endif
                                 </div>
                                 <div class="mt-2">
-                                    <p class="text-xs text-white font-medium truncate">{{ $movie['title'] }}</p>
-                                    <p class="text-[10px] text-gray-500">{{ date('Y', strtotime($movie['release_date'])) }}</p>
+                                    <p class="text-xs text-white font-medium truncate">{{ $movie['title'] ?? 'Unknown' }}</p>
+                                    <p class="text-[10px] text-gray-500">{{ !empty($movie['release_date']) ? date('Y', strtotime($movie['release_date'])) : 'N/A' }}</p>
                                 </div>
                             </a>
                         @endforeach
@@ -61,14 +63,16 @@
                             <a href="{{ route('detail.tv', $show['id']) }}" class="group">
                                 <div class="relative overflow-hidden rounded-xl card-hover transition-all duration-300">
                                     <img src="{{ app(\App\Services\TmdbService::class)->imageUrl($show['poster_path'] ?? null) }}"
-                                         alt="{{ $show['name'] }}" class="w-full aspect-[2/3] object-cover">
+                                         alt="{{ $show['name'] ?? 'TV Show' }}" class="w-full aspect-[2/3] object-cover">
+                                    @if(!empty($show['vote_average']))
                                     <div class="absolute top-2 right-2 bg-black/70 backdrop-blur-sm px-1.5 py-0.5 rounded-full text-[10px] font-bold text-yellow-400">
                                         ⭐ {{ number_format($show['vote_average'], 1) }}
                                     </div>
+                                    @endif
                                 </div>
                                 <div class="mt-2">
-                                    <p class="text-xs text-white font-medium truncate">{{ $show['name'] }}</p>
-                                    <p class="text-[10px] text-gray-500">{{ date('Y', strtotime($show['first_air_date'])) }}</p>
+                                    <p class="text-xs text-white font-medium truncate">{{ $show['name'] ?? 'Unknown' }}</p>
+                                    <p class="text-[10px] text-gray-500">{{ !empty($show['first_air_date']) ? date('Y', strtotime($show['first_air_date'])) : 'N/A' }}</p>
                                 </div>
                             </a>
                         @endforeach
