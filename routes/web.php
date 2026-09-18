@@ -8,33 +8,7 @@ use App\Http\Controllers\RecommendationController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\WatchlistController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Artisan;
-
 Route::get('/', [HomeController::class, 'index'])->name('home');
-
-// Setup route - jalankan sekali setelah deploy, lalu hapus
-Route::get('/setup/{key}', function ($key) {
-    if ($key !== 'screentime-setup-2026') {
-        abort(403);
-    }
-
-    try {
-        // Generate APP_KEY jika belum ada
-        if (!env('APP_KEY')) {
-            Artisan::call('key:generate', ['--force' => true]);
-        }
-
-        // Run migration
-        Artisan::call('migrate', ['--force' => true]);
-        $output = Artisan::output();
-
-        return response("Setup Berhasil!\n\n" . $output, 200)
-            ->header('Content-Type', 'text/plain');
-    } catch (\Exception $e) {
-        return response("Error: " . $e->getMessage(), 500)
-            ->header('Content-Type', 'text/plain');
-    }
-});
 
 Route::get('/browse', [BrowseController::class, 'index'])->name('browse');
 
